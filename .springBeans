@@ -10,6 +10,7 @@
 		<config>WebContent/WEB-INF/notices-servlet.xml</config>
 		<config>src/com/springtutorial48/spring/web/config/dao-config.xml</config>
 		<config>src/com/springtutorial48/spring/web/config/service-config.xml</config>
+		<config>src/com/springtutorial48/spring/web/config/security-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
