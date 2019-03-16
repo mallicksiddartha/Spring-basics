@@ -11,13 +11,13 @@ public class Notice {
 
 	private int id;
 	
-	@Size(min=5, max=50)
+	@Size(min=5, max=50, message="Not null anotation not needed, when size is defined")
 	private String name;
 	
 	@ValidEmail
 	private String email;
 	
-	@Size(min=20, max=250)
+	@Size(min=20, max=250, message="Disco dancer")
 	private String text;
 
 	public int getId() {
@@ -34,6 +34,8 @@ public class Notice {
 	}
 
 	public Notice(int id, String name, String email, String text) {
+		System.out.println("in 4 field constructor, notice");
+
 		this.id = id;
 		this.name = name;
 		this.email = email;

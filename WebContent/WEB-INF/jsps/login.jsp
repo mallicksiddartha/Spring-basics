@@ -46,15 +46,6 @@
 				</div>
 			</div>
 
-			<!-- Password input-->
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="password">Remember me</label>
-				<div class="col-md-4">
-					<input id="remember-me" name="remember-me" type="checkbox" checked="checked"
-						class="form-control input-md">
-
-				</div>
-			</div>
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>
@@ -66,7 +57,6 @@
 				value="${_csrf.token}" />
 		</fieldset>
 	</form>
-	<p> <a href="<c:url value='/createaccount' />" > Create new account</a></p>
 </body>
 </html>
 
