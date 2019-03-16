@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.springtutorial48.spring.web.dao.Notice;
@@ -26,6 +27,7 @@ public class NoticesService {
 	}
 
 
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	public void create(@Valid Notice notice) {
 		noticesDao.create(notice);
 		
