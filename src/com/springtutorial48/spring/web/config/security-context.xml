@@ -9,8 +9,8 @@
 		
 		<security:authentication-provider>
 			<security:jdbc-user-service data-source-ref="dataSource"
-				users-by-username-query='SELECT * FROM users where users.username = binary ?'
-				authorities-by-username-query='SELECT * FROM authorities where authorities.username = binary ?'
+				users-by-username-query='SELECT username, password, enabled FROM users where username = binary ?'
+				authorities-by-username-query='SELECT username, authority FROM users where username = binary ?'
 				id="jdbcDataSource" />
 			<security:password-encoder ref="passwordEncoder"></security:password-encoder>
 		</security:authentication-provider>

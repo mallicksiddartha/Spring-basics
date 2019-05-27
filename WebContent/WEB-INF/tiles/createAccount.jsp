@@ -13,11 +13,21 @@
 
 				<!-- Text input-->
 				<div class="form-group">
-					<label class="col-md-4 control-label" for="name">Username</label>
+					<label class="col-md-4 control-label" for="username">Username</label>
 					<div class="col-md-4">
 						<sf:input id="username" path="username" name="username" type="text"
 							class="form-control input-md" />
 							<sf:errors path="username" cssClass="alert-danger"></sf:errors>
+					</div>
+				</div>
+				
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="name">Name</label>
+					<div class="col-md-4">
+						<sf:input id="name" path="name" name="name" type="text"
+							class="form-control input-md" />
+							<sf:errors path="name" cssClass="alert-danger"></sf:errors>
 					</div>
 				</div>
 

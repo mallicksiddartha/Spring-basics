@@ -3,6 +3,8 @@ package com.springtutorial48.spring.web.test.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.junit.Before;
@@ -36,11 +38,22 @@ public class UserDaoTest {
 	public void init() {
 		JdbcTemplate jdbc = new JdbcTemplate(dataSource);
 		jdbc.execute("delete from notices");
+		jdbc.execute("delete from users");
 	}
+	
 	@Test
 	public void testCreateUser() {
-		User user = new User("Luibui", "china123", "luibui@springtest.com", true, "ROLE_USER");
+		User user = new User("Luibui", "Luibui Ninetail", "china1234", "luibui@springtest.com", true, "ROLE_USER");
 		
-		assertTrue("Lui bui usr created returns true", usersDao.create(user));
+		assertTrue("Lui bui user created returns true", usersDao.create(user));
+		
+		List<User> users = usersDao.getAllUsers();
+		
+		
+		assertEquals("User size needs to be 1. ", 1, users.size());
+		
+		assertTrue("User lui bui should exist", usersDao.exists(user.getUsername()));
+		
+		assertEquals("Created user should be identical to the user in the user list.", user, users.get(0));
 	}
 }
