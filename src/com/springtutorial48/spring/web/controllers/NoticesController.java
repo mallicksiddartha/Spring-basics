@@ -1,17 +1,18 @@
 package com.springtutorial48.spring.web.controllers;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Random;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,34 +43,26 @@ public class NoticesController {
 		return "Home";
 	}
 
-	@RequestMapping(value="/notices")
-	public String showNotices(Model model) {
-		
-		/**
-		 * This random variable is randomly throwing a 
-		 * custom made exception to trigger the 
-		 * database exception handling class
-		 */
-		Random rand = new Random();
-		if(rand.nextInt(100) == 58) {
-			noticesService.getTestException();
-		}
-		
-		List<Notice> notices = this.noticesService.getCurrentData();
-		
-		model.addAttribute("notices", notices);
-		
-		return "notices";
-	}
 	
 	@RequestMapping(value="/createnotice")
-	public String createNotice(Model model) {
-		model.addAttribute(new Notice());
+	public String createNotice(Model model, Principal principal) {
+		Notice notice = null;
+		
+		if(principal != null) {
+			String userName = principal.getName();
+			notice = noticesService.getUserNotice(userName);
+		}
+		
+		if(notice == null) {
+			notice = new Notice();
+		}
+		model.addAttribute(notice);
 		return "create";
 	}
 	
 	@RequestMapping(value="/docreate", method=RequestMethod.POST)
-	public String doCreate(Model model,@Valid Notice notice, BindingResult result) {
+	public String doCreate(Model model,@Valid Notice notice, BindingResult result, Principal principal
+			,@RequestParam(value="delete", required=false) String delete) {
 		
 		if(result.hasErrors()) {
 			List<ObjectError> errors = result.getAllErrors();
@@ -80,9 +73,18 @@ public class NoticesController {
 		} else {
 			System.out.println("Form validated");
 		}
+		notice.getUser().setUsername(principal.getName());
+		System.out.println("** notice controller, get username from notice: " + notice.getUsername());
+		if(delete != null) {
+			System.out.println("Delete is not null");
+			noticesService.deleteNotice(notice.getId());
+			return "noticeDeleted";
+		} else {
+			System.out.println("Delete is null");
+			noticesService.saveOrUpdate(notice);
+			System.out.println("Created notice: " + notice);
+			return "noticeCreated";
+		}
 		
-		noticesService.create(notice);
-		System.out.println("Created notice: " + notice);
-		return "noticeCreated";
 	}
 }

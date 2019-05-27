@@ -18,9 +18,9 @@
 			<c:forEach var="notice" items="${notices}" varStatus="noticeLoop">
 				<tr>
 					<th scope="row"><c:out value="${noticeLoop.count}"></c:out></th>
-					<td><c:out value="${notice.getName()}"></c:out></td>
-					<td><c:out value="${notice.getEmail()}"></c:out></td>
-					<td><c:out value="${notice.getText()}"></c:out></td>
+					<td><c:out value="${notice.user.name}"></c:out></td>
+					<td><c:out value="${notice.user.email}"></c:out></td>
+					<td><c:out value="${notice.text}"></c:out></td>
 				</tr>
 			</c:forEach>
 		</tbody>

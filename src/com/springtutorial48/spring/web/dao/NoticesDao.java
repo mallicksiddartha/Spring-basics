@@ -20,12 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mysql.cj.jdbc.MysqlParameterMetadata;
 
 @Component("noticesDao")
-public class NoticesDAO {
+public class NoticesDao {
 	private NamedParameterJdbcTemplate jdbc;
 	
 	
 	
-	public NoticesDAO() {
+	public NoticesDao() {
 		System.out.println("Creating notices dao.");
 	}
 
@@ -35,61 +35,48 @@ public class NoticesDAO {
 	}
 	
 	public List<Notice> getNotices(){		
-		return jdbc.query("SELECT * FROM spring_tutorial.notices;", new RowMapper<Notice>() {
-
-			public Notice mapRow(ResultSet rs, int arg1) throws SQLException {
-				Notice notice = new Notice();
-				notice.setId(rs.getInt("id"));
-				notice.setName(rs.getString("name"));
-				notice.setEmail(rs.getString("email"));
-				notice.setText(rs.getString("text"));
-				return notice;
-			}
-			
-		});
+		return jdbc.query("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true"
+				, new NoticeRowMapper());
+	}
+	
+	public List<Notice> getNotices(String username){		
+		return jdbc.query("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true and notices.username=:username"
+				, new MapSqlParameterSource("username", username), new NoticeRowMapper());
 	}
 	
 	public Notice getNotice(int id){
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("id", id);
 		
-		return jdbc.queryForObject("SELECT * FROM spring_tutorial.notices where id = :id;", params, new RowMapper<Notice>() {
-
-			public Notice mapRow(ResultSet rs, int arg1) throws SQLException {
-				Notice notice = new Notice();
-				notice.setId(rs.getInt("id"));
-				notice.setName(rs.getString("name"));
-				notice.setEmail(rs.getString("email"));
-				notice.setText(rs.getString("text"));
-				return notice;
-			}
-			
-		});
+		return jdbc.queryForObject("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true and id = :id", params
+				, new NoticeRowMapper());
 	}
 	
 	public boolean delete(int id) {
 		MapSqlParameterSource params = new MapSqlParameterSource();
+		System.out.println("************111111111444444444*********" + id);
 		params.addValue("id", id);
 		return jdbc.update("delete from notices where id = :id", params) == 1;
 	}
 	
 	public boolean create(Notice notice) {
+		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$"+notice);
 		BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(notice);
 		
-		return jdbc.update("insert into notices (name, email, text) values (:name, :email, :text);", params) == 1;
+		return jdbc.update("insert into notices (username, text) values (:username, :text)", params) == 1;
 	}
 	
 	public boolean update(Notice notice) {
 		BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(notice);
 		
-		return jdbc.update("update notices set name=:name, email=:email,text=:text where id=:id;", params) == 1;
+		return jdbc.update("update notices set text=:text where id=:id;", params) == 1;
 	}
 	
 	@Transactional
 	public int[] batchCreate(List<Notice> notices) {
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(notices);
 
-		return jdbc.batchUpdate("insert into notices (id, name, email, text) values (:id, :name, :email, :text);", params);
+		return jdbc.batchUpdate("insert into notices (username, text) values (:username, :text)", params);
 	}
 
 }
