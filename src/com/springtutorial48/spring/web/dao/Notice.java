@@ -1,14 +1,30 @@
 package com.springtutorial48.spring.web.dao;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+
+@Entity
+@Table(name="notices")
 public class Notice {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
+	@ManyToOne
+	@JoinColumn(name="username")
 	private User user;
 	
 	@Size(min=20, max=250)
+	@Column(name="text")
 	private String text;
 
 	public int getId() {

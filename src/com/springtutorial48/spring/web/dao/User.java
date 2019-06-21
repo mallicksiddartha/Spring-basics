@@ -1,29 +1,46 @@
 package com.springtutorial48.spring.web.dao;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.springtutorial48.spring.web.validation.ValidEmail;
 
+@Entity
+@Table(name="users")
 public class User {
 	@NotBlank
 	@Size(min=5, max=20)
 	@Pattern(regexp="^\\w{4,}$")
+	@Id
+	@Column(name="username")
 	private String username;
 	
 	@NotBlank(message="Password cannot be blank.")
 	@Pattern(regexp="^\\S+$")
 	@Size(min=6)
+	@Column(name="password")
 	private String password;
 	
 	@NotBlank
 	@Size(min=5, max=60)
+	@Column(name="name")
 	private String name;
 	
 	@ValidEmail
+	@Column(name="email")
 	private String email;
+	
+	
+	@Column(name="enabled")
 	private boolean enabled;
+	
+	
+	@Column(name="authority")
 	private String authority;
 
 	public String getUsername() {

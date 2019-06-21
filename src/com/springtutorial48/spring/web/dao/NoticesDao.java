@@ -4,8 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,68 +22,84 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mysql.cj.jdbc.MysqlParameterMetadata;
 
+@Repository
+@Transactional
 @Component("noticesDao")
 public class NoticesDao {
-	private NamedParameterJdbcTemplate jdbc;
 	
+	@Autowired
+	private SessionFactory sessionFactory;
 	
+	public Session session() {
+		return sessionFactory.getCurrentSession();
+	}
 	
 	public NoticesDao() {
-		System.out.println("Creating notices dao.");
-	}
 
-	@Autowired
-	public void setDataSource(DataSource source) {
-		this.jdbc = new NamedParameterJdbcTemplate(source);
 	}
 	
-	public List<Notice> getNotices(){		
-		return jdbc.query("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true"
-				, new NoticeRowMapper());
+	public List<Notice> getNotices(){
+		CriteriaBuilder builder = session().getCriteriaBuilder();
+		CriteriaQuery<Notice> crit = builder.createQuery(Notice.class);
+		Root<User> rootUser =  crit.from(User.class);
+		Root<Notice> rootNotice =  crit.from(Notice.class);
+		crit.select(rootNotice).where(builder.and(
+				builder.equal(rootNotice.get("user"), rootUser.get("username")),
+				builder.equal(rootUser.get("enabled"), true)
+				));		
+		Query<Notice> query = session().createQuery(crit);
+		List<Notice> result = query.getResultList();
+		return result;
 	}
 	
-	public List<Notice> getNotices(String username){		
-		return jdbc.query("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true and notices.username=:username"
-				, new MapSqlParameterSource("username", username), new NoticeRowMapper());
+	public List<Notice> getNotices(String username){
+		CriteriaBuilder builder = session().getCriteriaBuilder();
+		CriteriaQuery<Notice> crit = builder.createQuery(Notice.class);
+		Root<User> rootUser =  crit.from(User.class);
+		Root<Notice> rootNotice =  crit.from(Notice.class);
+		crit.select(rootNotice).where(builder.and(
+				builder.equal(rootNotice.get("user"), rootUser.get("username")),
+				builder.equal(rootUser.get("enabled"), true),
+				builder.equal(rootUser.get("username"), username)
+				));		
+		Query<Notice> query = session().createQuery(crit);
+		List<Notice> result = query.getResultList();
+		return result;
 	}
 	
 	public Notice getNotice(int id){
-		MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("id", id);
-		
-		return jdbc.queryForObject("SELECT * FROM notices, users where notices.username=users.username and users.enabled=true and id = :id", params
-				, new NoticeRowMapper());
+		CriteriaBuilder builder = session().getCriteriaBuilder();
+		CriteriaQuery<Notice> crit = builder.createQuery(Notice.class);
+		Root<Notice> rootNotice =  crit.from(Notice.class);
+		//crit.multiselect(rootNotice, rootUser).where(builder.equal(rootUser.get("enabled"), true));
+		crit.select(rootNotice).where(builder.equal(rootNotice.get("id"), id));		
+		Query<Notice> query = session().createQuery(crit).setMaxResults(1);
+		List<Notice> result = query.getResultList();
+		return result.get(0);
 	}
 	
 	public boolean delete(int id) {
-		MapSqlParameterSource params = new MapSqlParameterSource();
-		System.out.println("************111111111444444444*********" + id);
-		params.addValue("id", id);
-		return jdbc.update("delete from notices where id = :id", params) == 1;
-	}
-	
-	public boolean create(Notice notice) {
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$"+notice);
-		BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(notice);
 		
-		return jdbc.update("insert into notices (username, text) values (:username, :text)", params) == 1;
-	}
-	
-	public boolean update(Notice notice) {
-		BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(notice);
+		CriteriaBuilder builder = session().getCriteriaBuilder();
+		CriteriaDelete<Notice> crit = builder.createCriteriaDelete(Notice.class);
+		Root<Notice> rootNotice =  crit.from(Notice.class);
+		crit.where(builder.equal(rootNotice.get("id"), id));	
 		
-		return jdbc.update("update notices set text=:text where id=:id;", params) == 1;
+		int result = session().createQuery(crit).executeUpdate();
+		return result == 1;
 	}
 	
-	@Transactional
-	public int[] batchCreate(List<Notice> notices) {
-		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(notices);
-
-		return jdbc.batchUpdate("insert into notices (username, text) values (:username, :text)", params);
+	public void create(Notice notice) {
+		session().saveOrUpdate(notice);
+	}
+	
+	public void update(Notice notice) {
+		session().saveOrUpdate(notice);
 	}
 
 }
