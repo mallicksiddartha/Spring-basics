@@ -23,6 +23,7 @@
 		<!-- <security:intercept-url pattern="/admin" access="permitAll" /> -->
 		<security:intercept-url pattern="/createnotice" access="isAuthenticated()" />
 		<security:intercept-url pattern="/docreate" access="isAuthenticated()" />
+		<security:intercept-url pattern="/noticeDeleted" access="isAuthenticated()" />
 		<security:intercept-url pattern="/static/**" access="permitAll" />
 		<security:intercept-url pattern="/loggedout" access="permitAll" />
 		<security:intercept-url pattern="/denied" access="permitAll" />

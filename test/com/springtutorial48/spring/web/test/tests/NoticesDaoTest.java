@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,11 +52,11 @@ public class NoticesDaoTest {
 	public void testNotices() {
 		User user = new User("Luibui", "Luibui Ninetail", "china1234", "luibui@springtest.com", true, "ROLE_USER");
 
-		assertTrue("Lui bui user created returns true", usersDao.create(user));
+		usersDao.create(user);
 		
 		Notice notice = new Notice(user, "This is a test notice..");
 		
-		assertTrue("Notice creation should return true.", noticesDao.create(notice));
+		noticesDao.create(notice);
 		
 		List<Notice> notices = noticesDao.getNotices();
 		
@@ -64,24 +65,22 @@ public class NoticesDaoTest {
 		
 		notice = notices.get(0);
 		notice.setText("Updated notice text!!!");
-		assertTrue("Notice text update should return true!!", noticesDao.update(notice));
+		noticesDao.update(notice);
 		
 		Notice updated = noticesDao.getNotice(notice.getId());
 		assertEquals("Retrived updated notice should be identical to the created notice", notice, updated);
 		
 		Notice notice2 = new Notice(user, "New test notice for testing, ching ching ching");
-		assertTrue("Creating notice2, should return true from create method from noticeDao ", noticesDao.create(notice2));
+		noticesDao.create(notice2);
 		
 		List<Notice> userSpecificNotice = noticesDao.getNotices(user.getUsername());
 		assertEquals("Should be 2 notice for luibui", 2, userSpecificNotice.size());
 		
-		
-		/*noticesDao.delete(notice.getId());
 		assertTrue("Deleting notice, should return true from delete method from noticeDao ", noticesDao.delete(notice.getId()));
 		
 		assertTrue("Deleting notice2, should return true from delete method from noticeDao ", noticesDao.delete(notice2.getId()));
 		
 		List<Notice> empty = noticesDao.getNotices();
-		assertEquals("Notices list should be empty after notice is deleted", 0, empty.size());*/
+		assertEquals("Notices list should be empty after notice is deleted", 0, empty.size());
 	}
 }

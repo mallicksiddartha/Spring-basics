@@ -45,7 +45,7 @@
 				<div class="form-group">
 					<label class="col-md-4 control-label" for="email">Password</label>
 					<div class="col-md-5">
-						<sf:input id="password" path="password" name="password" type="text"
+						<sf:input id="password" path="password" name="password" type="password"
 							class="form-control input-md" />
 					</div>
 				</div>
@@ -54,7 +54,7 @@
 				<div class="form-group">
 					<label class="col-md-4 control-label" for="email">Confirm password</label>
 					<div class="col-md-5">
-						<input id="confirmPassword" name="confirmPassword" type="text"
+						<input id="confirmPassword" name="confirmPassword" type="password"
 							class="form-control input-md" />
 					</div>
 				</div>
