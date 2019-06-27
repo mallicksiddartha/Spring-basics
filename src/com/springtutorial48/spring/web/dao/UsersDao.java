@@ -74,10 +74,18 @@ public class UsersDao {
 
 	@SuppressWarnings("unchecked")
 	public List<User> getAllUsers() {
-		/*return jdbc.query("select * from users"
-				, BeanPropertyRowMapper.newInstance(User.class));*/
-		
 		return session().createQuery("from User").list();
+	}
+
+	public User getUser(String username) {
+		CriteriaBuilder builder = session().getCriteriaBuilder();
+		CriteriaQuery<User> crit = builder.createQuery(User.class);
+		Root<User> root =  crit.from(User.class);
+		crit.select(root).where(builder.equal(root.get("username"), username));
+		
+		Query<User> query = session().createQuery(crit).setMaxResults(1);
+		List<User> results = query.getResultList();
+		return results.get(0);
 	}
 	
 
