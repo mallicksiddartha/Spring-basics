@@ -1,5 +1,7 @@
 package com.springtutorial48.spring.web.dao;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,7 +14,10 @@ import com.springtutorial48.spring.web.validation.ValidEmail;
 
 @Entity
 @Table(name="users")
-public class User {
+public class User implements Serializable{
+
+	private static final long serialVersionUID = -8224261345003652780L;
+
 	@NotBlank
 	@Size(min=5, max=20)
 	@Pattern(regexp="^\\w{4,}$")

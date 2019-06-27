@@ -68,4 +68,12 @@
 		<put-attribute name="title" value="Notice Deleted"></put-attribute>
 		<put-attribute name="page-content" value="/WEB-INF/tiles/noticeDeleted.jsp"></put-attribute>
 	</definition>
+	<definition name="showContactForm" extends="notice.base">
+		<put-attribute name="title" value="Send Message"></put-attribute>
+		<put-attribute name="page-content" value="/WEB-INF/tiles/contact.jsp"></put-attribute>
+	</definition>
+	<definition name="messageSent" extends="notice.base">
+		<put-attribute name="title" value="Message sent"></put-attribute>
+		<put-attribute name="page-content" value="/WEB-INF/tiles/messagesent.jsp"></put-attribute>
+	</definition>
 </tiles-definitions>

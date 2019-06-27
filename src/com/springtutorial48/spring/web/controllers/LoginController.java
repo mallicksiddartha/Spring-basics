@@ -79,7 +79,7 @@ public class LoginController {
 			result.rejectValue("username", "Duplicate.Key.user.username", "This username already exists.");
 			return "createAccount";
 		}*/
-		
+		System.out.println("###################################################  in login controller create user method");
 		usersService.create(user);
 		System.out.println("Created notice: " + user);
 		return "accountCreated";
